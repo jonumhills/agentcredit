@@ -40,9 +40,10 @@ graph TB
     SC -->|Score +5 on-time| KYA
     L2 -->|Deposit liquidity| SC
 
-    style KYA fill:#3772ff,color:#fff
-    style SC fill:#0ecb81,color:#000
+    style KYA fill:#E85D04,color:#fff
+    style SC fill:#10B981,color:#fff
     style MATCH fill:#111,color:#fff
+    style API fill:#111,color:#fff
 ```
 
 **The agent IS the borrower/lender.** It earns trust over time and unlocks better rates autonomously.
@@ -58,8 +59,8 @@ flowchart LR
     BORROWER -->|Score +5| TRUST[TrustScore<br/>Contract]
     TRUST -->|Better rates next loan| BORROWER
 
-    style ESCROW fill:#0ecb81,color:#000
-    style TRUST fill:#3772ff,color:#fff
+    style ESCROW fill:#10B981,color:#fff
+    style TRUST fill:#E85D04,color:#fff
     style LENDER fill:#111,color:#fff
     style BORROWER fill:#111,color:#fff
 ```
