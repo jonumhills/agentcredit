@@ -31,11 +31,13 @@ async function main() {
   const loanEscrowAddress = await loanEscrow.getAddress();
   console.log("   LoanEscrow deployed:", loanEscrowAddress);
 
-  // 4. Transfer TrustScore ownership to LoanEscrow so it can update scores
-  //    In production, use a multi-sig or role-based approach.
-  //    For hackathon: LoanEscrow + backend deployer both need write access.
-  //    We keep TrustScore owned by deployer and grant LoanEscrow as a separate caller.
-  console.log("\n4. Setup complete. Contracts deployed.");
+  // 4. Authorize LoanEscrow to write trust scores (recordLoan/recordRepayment/recordDefault)
+  console.log("\n4. Authorizing LoanEscrow on TrustScore...");
+  const TrustScoreContract = await ethers.getContractAt("TrustScore", trustScoreAddress);
+  const authTx = await TrustScoreContract.authorize(loanEscrowAddress);
+  await authTx.waitForDeployment?.() || await authTx.wait();
+  console.log("   LoanEscrow authorized to write trust scores.");
+  console.log("\n5. Setup complete. Contracts deployed.");
 
   const addresses = {
     network: (await ethers.provider.getNetwork()).name,

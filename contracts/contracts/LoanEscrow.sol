@@ -143,7 +143,6 @@ contract LoanEscrow is Ownable, ReentrancyGuard {
         require(durationSeconds <= t.maxDurationSeconds, "Duration too long");
 
         loanId = nextLoanId++;
-        uint256 interest = (principal * t.interestRateBps) / 10000;
 
         loans[loanId] = Loan({
             id:           loanId,

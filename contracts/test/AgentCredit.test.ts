@@ -22,6 +22,9 @@ describe("AgentCredit Contracts", function () {
       await trustScore.getAddress(),
       await registry.getAddress()
     );
+
+    // Authorize LoanEscrow to write trust scores
+    await trustScore.authorize(await loanEscrow.getAddress());
   });
 
   describe("AgentRegistry", function () {

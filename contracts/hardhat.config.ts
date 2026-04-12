@@ -3,7 +3,10 @@ import "@nomicfoundation/hardhat-toolbox";
 import * as dotenv from "dotenv";
 dotenv.config({ path: "../.env" });
 
-const DEPLOYER_PRIVATE_KEY = process.env.DEPLOYER_PRIVATE_KEY || "0x" + "0".repeat(64);
+const rawKey = process.env.DEPLOYER_PRIVATE_KEY || "";
+const DEPLOYER_PRIVATE_KEY =
+  rawKey.startsWith("0x") && rawKey.length === 66 ? rawKey : "0x" + "0".repeat(64);
+const hasKey = rawKey.startsWith("0x") && rawKey.length === 66;
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -16,16 +19,18 @@ const config: HardhatUserConfig = {
     localhost: {
       url: "http://127.0.0.1:8545",
     },
-    xlayer: {
-      url: process.env.XLAYER_RPC_URL || "https://rpc.xlayer.tech",
-      chainId: 196,
-      accounts: [DEPLOYER_PRIVATE_KEY],
-    },
-    xlayerTestnet: {
-      url: process.env.XLAYER_TESTNET_RPC_URL || "https://testrpc.xlayer.tech",
-      chainId: 195,
-      accounts: [DEPLOYER_PRIVATE_KEY],
-    },
+    ...(hasKey && {
+      xlayer: {
+        url: process.env.XLAYER_RPC_URL || "https://xlayerrpc.okx.com",
+        chainId: 196,
+        accounts: [DEPLOYER_PRIVATE_KEY],
+      },
+      xlayerTestnet: {
+        url: process.env.XLAYER_TESTNET_RPC_URL || "https://testrpc.xlayer.tech",
+        chainId: 1952,
+        accounts: [DEPLOYER_PRIVATE_KEY],
+      },
+    }),
   },
   etherscan: {
     apiKey: {

@@ -97,9 +97,9 @@ Score thresholds:
 
 | Contract | Address |
 |---|---|
-| AgentRegistry | `TBD` |
-| TrustScore | `TBD` |
-| LoanEscrow | `TBD` |
+| AgentRegistry | `0x7342A312979b28163360CFD60a5EC006B2B1eA8a` |
+| TrustScore | `0x6B915189C6d37Da79d42E033dac16F69C8C37164` |
+| LoanEscrow | `0x8436Fbe0D6BAF0e87A14e26ab0c921a963Baf118` |
 
 ## Setup
 

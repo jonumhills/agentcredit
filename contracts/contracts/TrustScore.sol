@@ -17,6 +17,23 @@ contract TrustScore is Ownable {
 
     mapping(address => Score) public scores;
 
+    /// Authorized writers (owner + LoanEscrow contract)
+    mapping(address => bool) public authorized;
+
+    modifier onlyAuthorized() {
+        require(msg.sender == owner() || authorized[msg.sender], "Not authorized");
+        _;
+    }
+
+    /// @notice Grant write access to an address (e.g. LoanEscrow).
+    function authorize(address addr) external onlyOwner {
+        authorized[addr] = true;
+    }
+
+    function deauthorize(address addr) external onlyOwner {
+        authorized[addr] = false;
+    }
+
     /// Minimum score thresholds
     uint8 public constant THRESHOLD_SMALL_LOANS = 41;
     uint8 public constant THRESHOLD_MEDIUM_LOANS = 61;
@@ -40,13 +57,13 @@ contract TrustScore is Ownable {
     }
 
     /// @notice Record a new loan taken (increments loanCount).
-    function recordLoan(address agent, uint256 loanId) external onlyOwner {
+    function recordLoan(address agent, uint256 loanId) external onlyAuthorized {
         scores[agent].loanCount++;
         emit LoanRecorded(agent, loanId);
     }
 
     /// @notice Record a repayment event and adjust score.
-    function recordRepayment(address agent, uint256 loanId, bool onTime) external onlyOwner {
+    function recordRepayment(address agent, uint256 loanId, bool onTime) external onlyAuthorized {
         scores[agent].repaidCount++;
         uint8 current = scores[agent].value;
 
@@ -63,7 +80,7 @@ contract TrustScore is Ownable {
     }
 
     /// @notice Record a default and penalize score.
-    function recordDefault(address agent, uint256 loanId) external onlyOwner {
+    function recordDefault(address agent, uint256 loanId) external onlyAuthorized {
         scores[agent].defaultCount++;
         uint8 current = scores[agent].value;
         // Default: -20 points (floor at 0)

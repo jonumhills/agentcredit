@@ -1,0 +1,9 @@
+{
+  "network": "xlayerTestnet",
+  "chainId": "1952",
+  "deployer": "0xa4C397A81bf4Ec8e386418d39fd2D36efd524e64",
+  "AgentRegistry": "0x7342A312979b28163360CFD60a5EC006B2B1eA8a",
+  "TrustScore": "0x6B915189C6d37Da79d42E033dac16F69C8C37164",
+  "LoanEscrow": "0x8436Fbe0D6BAF0e87A14e26ab0c921a963Baf118",
+  "deployedAt": "2026-04-12T00:21:48.021Z"
+}
