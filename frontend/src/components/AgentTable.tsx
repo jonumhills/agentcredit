@@ -1,8 +1,6 @@
 import type { Agent } from "../utils/api";
 import { KYAChecks } from "./KYAChecks";
 
-type SortKey = "trustScore" | "role" | "registeredAt";
-
 interface Props {
   agents: Agent[];
   onRunKYA?: (wallet: string) => void;
@@ -63,8 +61,8 @@ export function AgentTable({ agents, onRunKYA, loading }: Props) {
           </tr>
         </thead>
         <tbody>
-          {agents.map((agent, idx) => (
-            <AgentRow key={agent.wallet} agent={agent} idx={idx} onRunKYA={onRunKYA} />
+          {agents.map((agent) => (
+            <AgentRow key={agent.wallet} agent={agent} onRunKYA={onRunKYA} />
           ))}
         </tbody>
       </table>
@@ -72,7 +70,7 @@ export function AgentTable({ agents, onRunKYA, loading }: Props) {
   );
 }
 
-function AgentRow({ agent, idx, onRunKYA }: { agent: Agent; idx: number; onRunKYA?: (w: string) => void }) {
+function AgentRow({ agent, onRunKYA }: { agent: Agent; onRunKYA?: (w: string) => void }) {
   const timeAgo = (iso: string) => {
     const diff = Date.now() - new Date(iso).getTime();
     const m = Math.floor(diff / 60000);

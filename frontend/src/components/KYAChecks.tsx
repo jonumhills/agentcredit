@@ -12,8 +12,6 @@ interface Props {
 }
 
 export function KYAChecks({ kycPassed, trustScore, role, active, compact = false }: Props) {
-  const tier = getTier(trustScore);
-
   if (compact) {
     return (
       <div className="flex flex-wrap gap-1">
