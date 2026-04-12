@@ -1,7 +1,13 @@
 import { useState, useEffect } from "react";
 import { fetchHealth } from "../utils/api";
+import type { Tab } from "../App";
 
-export function Header() {
+interface HeaderProps {
+  tab: Tab;
+  onTabChange: (t: Tab) => void;
+}
+
+export function Header({ tab, onTabChange }: HeaderProps) {
   const [networkOk, setNetworkOk] = useState<boolean | null>(null);
   const [blockTime, setBlockTime] = useState<string>("");
 
@@ -57,26 +63,23 @@ export function Header() {
 
       {/* Sub-nav / filters */}
       <div className="flex items-center gap-1 px-5 h-9 border-t border-okx-border overflow-x-auto">
-        <TabPill active>All Agents</TabPill>
-        <TabPill>Lenders</TabPill>
-        <TabPill>Borrowers</TabPill>
-        <TabPill>Leaderboard</TabPill>
-        <div className="ml-auto flex items-center gap-2 text-xs text-okx-muted">
-          <span className="border border-okx-border rounded px-2 py-0.5 hover:border-okx-border2 cursor-pointer">Filters</span>
-          <span className="border border-okx-border rounded px-2 py-0.5 hover:border-okx-border2 cursor-pointer">24h ▾</span>
-        </div>
+        <TabPill active={tab === "all"}        onClick={() => onTabChange("all")}>All Agents</TabPill>
+        <TabPill active={tab === "lenders"}    onClick={() => onTabChange("lenders")}>Lenders</TabPill>
+        <TabPill active={tab === "borrowers"}  onClick={() => onTabChange("borrowers")}>Borrowers</TabPill>
+        <TabPill active={tab === "leaderboard"} onClick={() => onTabChange("leaderboard")}>Leaderboard</TabPill>
       </div>
     </header>
   );
 }
 
-function TabPill({ children, active }: { children: React.ReactNode; active?: boolean }) {
+function TabPill({ children, active, onClick }: { children: React.ReactNode; active?: boolean; onClick?: () => void }) {
   return (
-    <button className={`px-3 py-1 rounded text-xs font-medium transition-colors whitespace-nowrap ${
-      active
-        ? "bg-white text-black"
-        : "text-okx-muted hover:text-white"
-    }`}>
+    <button
+      onClick={onClick}
+      className={`px-3 py-1 rounded text-xs font-medium transition-colors whitespace-nowrap ${
+        active ? "bg-white text-black" : "text-okx-muted hover:text-white"
+      }`}
+    >
       {children}
     </button>
   );

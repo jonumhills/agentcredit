@@ -5,16 +5,19 @@ import { StatsRow } from "../components/StatsRow";
 import { AgentTable } from "../components/AgentTable";
 import { LenderTable } from "../components/LenderTable";
 import { KYAChecks } from "../components/KYAChecks";
+import type { Tab } from "../App";
 
-type Tab = "all" | "lenders" | "borrowers" | "leaderboard";
+interface Props {
+  tab: Tab;
+  onTabChange: (t: Tab) => void;
+}
 
-export function Dashboard() {
+export function Dashboard({ tab, onTabChange }: Props) {
   const [agents, setAgents]       = useState<Agent[]>([]);
   const [lenders, setLenders]     = useState<LenderTerms[]>([]);
   const [leaderboard, setLeaderboard] = useState<Agent[]>([]);
   const [loading, setLoading]     = useState(true);
   const [error, setError]         = useState<string | null>(null);
-  const [tab, setTab]             = useState<Tab>("all");
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
   const [kyaRunning, setKyaRunning]   = useState<string | null>(null);
 
@@ -124,7 +127,7 @@ export function Dashboard() {
         {(["all", "lenders", "borrowers", "leaderboard"] as Tab[]).map((t) => (
           <button
             key={t}
-            onClick={() => setTab(t)}
+            onClick={() => onTabChange(t)}
             className={`px-4 py-1.5 rounded text-xs font-medium transition-colors capitalize ${
               tab === t
                 ? "bg-white text-black"
