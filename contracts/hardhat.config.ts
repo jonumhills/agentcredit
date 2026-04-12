@@ -50,7 +50,7 @@ const config: HardhatUserConfig = {
         network: "xlayerTestnet",
         chainId: 1952,
         urls: {
-          apiURL:     "https://www.oklink.com/api/v5/explorer/contract/verify-source-code-plugin/XLAYER_TEST",
+          apiURL:     "https://www.oklink.com/api/v5/explorer/contract/verify-source-code-plugin/XLAYER_TESTNET",
           browserURL: "https://www.oklink.com/xlayer-test",
         },
       },
