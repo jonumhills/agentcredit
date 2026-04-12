@@ -84,7 +84,7 @@ export class MatchmakingService {
           lender,
           availableLiquidity: ethers.formatEther(terms.availableLiquidity),
           maxLoanSize: ethers.formatEther(terms.maxLoanSize),
-          minBorrowerScore: terms.minBorrowerScore,
+          minBorrowerScore: Number(terms.minBorrowerScore),
           interestRateBps: Number(terms.interestRateBps),
           interestRatePct: Number(terms.interestRateBps) / 100,
           maxDurationDays: Math.round(Number(terms.maxDurationSeconds) / 86400),
