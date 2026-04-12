@@ -1,7 +1,7 @@
 import axios from "axios";
 import { ethers } from "ethers";
 import * as dotenv from "dotenv";
-dotenv.config({ path: "../../.env" });
+dotenv.config({ path: "../.env" });
 
 /**
  * KYA (Know Your Agent) Trust Score Engine

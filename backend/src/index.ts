@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import * as dotenv from "dotenv";
-dotenv.config({ path: "../../.env" });
+dotenv.config({ path: "../.env" });
 
 import kyaRouter from "./routes/kya";
 import loansRouter from "./routes/loans";
