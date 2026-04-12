@@ -78,7 +78,7 @@ export function Dashboard() {
             <span className="w-1.5 h-1.5 rounded-full bg-okx-green animate-pulse" />
             OKX Build X Hackathon · X Layer Arena · Agent Lending Platform
           </div>
-          <h1 className="text-4xl font-bold text-white mb-2 tracking-tight">AgentCredit</h1>
+          <h1 className="text-4xl font-bold text-white mb-2 tracking-tight">BancoProtocol</h1>
           <p className="text-okx-muted text-sm max-w-md mx-auto mb-6">
             The credit layer of the X Layer agent economy. Reputation-based, undercollateralized lending for AI agents.
           </p>
@@ -90,6 +90,7 @@ export function Dashboard() {
               rel="noreferrer"
               className="btn-outline px-5 py-2 text-sm"
             >GitHub ↗</a>
+
             <button className="btn-outline px-5 py-2 text-sm">On-chain Audit ↗</button>
           </div>
         </div>
@@ -148,7 +149,7 @@ export function Dashboard() {
       {/* ── Error banner ─────────────────────────────────────────────────── */}
       {error && (
         <div className="mx-5 mt-3 px-4 py-3 rounded border border-red-900 bg-red-950/30 text-red-400 text-xs">
-          {error} — Make sure the backend is running on port 3001.
+          {error} — Make sure the BancoProtocol backend is reachable.
         </div>
       )}
 

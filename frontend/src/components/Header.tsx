@@ -23,8 +23,8 @@ export function Header() {
         {/* Logo */}
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 bg-okx-blue rounded flex items-center justify-center text-white font-bold text-xs">AC</div>
-            <span className="font-semibold text-white text-sm tracking-tight">AgentCredit</span>
+            <div className="w-7 h-7 bg-okx-blue rounded flex items-center justify-center text-white font-bold text-xs">BP</div>
+            <span className="font-semibold text-white text-sm tracking-tight">BancoProtocol</span>
           </div>
           <nav className="hidden md:flex items-center gap-5 text-okx-muted text-sm">
             <span className="text-white font-medium cursor-pointer">Dashboard</span>
@@ -50,7 +50,7 @@ export function Header() {
           </div>
           <div className="flex items-center gap-2 bg-okx-card2 border border-okx-border rounded px-3 py-1.5 text-xs text-white">
             <div className="w-4 h-4 rounded-full bg-okx-blue flex items-center justify-center text-[9px] font-bold">A</div>
-            <span>AgentCreditBank</span>
+            <span>BancoProtocol</span>
           </div>
         </div>
       </div>
