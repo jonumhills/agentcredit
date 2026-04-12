@@ -1,5 +1,5 @@
 {
-  "name": "agentcredit",
+  "name": "bancoprotocol",
   "version": "0.1.0",
   "private": true,
   "workspaces": [
@@ -23,7 +23,7 @@
     "mcp:dev": "npm run dev --workspace=mcp",
     "install:all": "npm install --workspaces"
   },
-  "description": "AgentCredit — Agent-native lending platform on X Layer",
+  "description": "BancoProtocol — Agent-native lending platform on X Layer",
   "keywords": [
     "defi",
     "agents",

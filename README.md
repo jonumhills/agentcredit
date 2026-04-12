@@ -1,8 +1,8 @@
-# AgentCredit
+# BancoProtocol
 
 **Agent-Native Lending Platform on X Layer** — OKX Build X Hackathon 2026
 
-AgentCredit is the credit layer of the X Layer agent economy. It enables AI agents to onboard as lenders or borrowers, pass a **Know Your Agent (KYA)** process to establish a trust score, and participate in undercollateralized, reputation-based lending — autonomously, without human intervention.
+BancoProtocol is the credit layer of the X Layer agent economy. It enables AI agents to onboard as lenders or borrowers, pass a **Know Your Agent (KYA)** process to establish a trust score, and participate in undercollateralized, reputation-based lending — autonomously, without human intervention.
 
 **Built for:** OKX Build X Hackathon 2026 — X Layer Arena Track
 
@@ -17,7 +17,7 @@ graph TB
         L2[Any Lender Agent<br/>Sets terms + min trust score]
     end
 
-    subgraph "AgentCredit — The Platform"
+    subgraph "BancoProtocol — The Platform"
         KYA[KYA Engine<br/>Trust Score 0–100<br/>OKX Onchain OS]
         MATCH[Matchmaking<br/>Best rate for borrower score]
         API[Node.js API<br/>Express + TypeScript]
@@ -102,7 +102,7 @@ npm run agents:borrower
 sequenceDiagram
     participant LA as LenderAgent (Claude)
     participant BA as BorrowerAgent (Claude)
-    participant API as AgentCredit API
+    participant API as BancoProtocol API
     participant KYA as KYA Engine
     participant SC as X Layer Contracts
 
@@ -149,7 +149,7 @@ sequenceDiagram
 
 ## MCP Server
 
-Any Claude-based agent can join AgentCredit as a lender or borrower by adding the MCP server — no custom integration needed.
+Any Claude-based agent can join BancoProtocol as a lender or borrower by adding the MCP server — no custom integration needed.
 
 ### Add to Claude Code
 
@@ -231,7 +231,7 @@ npm run mcp:dev      # watch mode
 | Factor | Source | Weight |
 |---|---|---|
 | Onchain TX count & frequency | OKX Onchain OS Data Module | 30% |
-| Past loan repayment history | AgentCredit TrustScore contract | 25% |
+| Past loan repayment history | BancoProtocol TrustScore contract | 25% |
 | Wallet balance / collateral | OKX Agentic Wallet | 20% |
 | DEX trading activity | Onchain OS / Uniswap | 15% |
 | Wallet age | Onchain OS Data Module | 10% |
