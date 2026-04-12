@@ -11,7 +11,7 @@
   ],
   "scripts": {
     "build": "npm run build --workspace=backend",
-    "start": "npm run start --workspace=backend",
+    "start": "node backend/dist/index.js",
     "contracts:compile": "npm run compile --workspace=contracts",
     "contracts:test": "npm run test --workspace=contracts",
     "contracts:deploy": "npm run deploy:xlayerTestnet --workspace=contracts",
