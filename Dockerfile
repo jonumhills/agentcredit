@@ -1,20 +1,15 @@
 FROM node:20-alpine
 WORKDIR /app
 
-# Copy root workspace manifest
-COPY package*.json ./
+# Copy only backend files — no workspace complexity
+COPY backend/package*.json ./
+COPY backend/tsconfig.json ./
+COPY backend/src ./src
 
-# Copy backend source
-COPY backend/package*.json ./backend/
-COPY backend/tsconfig.json ./backend/
-COPY backend/src ./backend/src
-
-# Install only backend dependencies (skip contracts/agents/frontend)
-RUN npm install --workspace=backend
-
-# Compile TypeScript
-RUN npm run build --workspace=backend
+# Install and build
+RUN npm install
+RUN npx tsc
 
 EXPOSE 3001
 
-CMD ["node", "backend/dist/index.js"]
+CMD ["node", "dist/index.js"]
