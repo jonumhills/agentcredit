@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "lender": "ts-node-dev --respawn --transpile-only src/lender/index.ts",
-    "borrower": "ts-node-dev --respawn --transpile-only src/borrower/index.ts",
-    "build": "tsc",
-    "start:lender": "node dist/lender/index.js",
-    "start:borrower": "node dist/borrower/index.js"
+    "agents:create":    "ts-node-dev --transpile-only src/scripts/createAgents.ts",
+    "agents:fund":      "ts-node-dev --transpile-only src/scripts/fundAgents.ts",
+    "agents:bootstrap": "ts-node-dev --transpile-only src/scripts/bootstrapAgents.ts",
+    "agents:start":     "ts-node-dev --respawn --transpile-only src/orchestrator.ts",
+    "build": "tsc"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.40.0",

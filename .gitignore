@@ -10,3 +10,4 @@ cache/
 typechain-types/
 .DS_Store
 *.log
+agents/agents.json
