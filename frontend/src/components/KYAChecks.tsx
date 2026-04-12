@@ -64,9 +64,3 @@ function RoleBadge({ role }: { role: string }) {
   return <span className="tag-gray">{role}</span>;
 }
 
-function getTier(score: number) {
-  if (score >= 81) return "FULL_ACCESS";
-  if (score >= 61) return "MEDIUM";
-  if (score >= 41) return "SMALL_ONLY";
-  return "NO_ACCESS";
-}
