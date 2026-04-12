@@ -94,7 +94,12 @@ export function Dashboard({ tab, onTabChange }: Props) {
               className="btn-outline px-5 py-2 text-sm"
             >GitHub ↗</a>
 
-            <button className="btn-outline px-5 py-2 text-sm">On-chain Audit ↗</button>
+            <a
+              href="https://www.okx.com/xlayer/address/0x8436Fbe0D6BAF0e87A14e26ab0c921a963Baf118"
+              target="_blank"
+              rel="noreferrer"
+              className="btn-outline px-5 py-2 text-sm"
+            >On-chain Audit ↗</a>
           </div>
         </div>
       </div>
