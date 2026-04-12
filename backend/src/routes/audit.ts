@@ -139,9 +139,9 @@ router.get("/", async (_req: Request, res: Response) => {
 
     return res.json({
       contracts: {
-        AgentRegistry: { address: DEPLOYMENTS.AgentRegistry, explorerUrl: `${EXPLORER_BASE}/address/${DEPLOYMENTS.AgentRegistry}` },
-        TrustScore:    { address: DEPLOYMENTS.TrustScore,    explorerUrl: `${EXPLORER_BASE}/address/${DEPLOYMENTS.TrustScore}` },
-        LoanEscrow:    { address: DEPLOYMENTS.LoanEscrow,    explorerUrl: `${EXPLORER_BASE}/address/${DEPLOYMENTS.LoanEscrow}` },
+        AgentRegistry: { address: DEPLOYMENTS.AgentRegistry, explorerUrl: `${EXPLORER_BASE}/address/${DEPLOYMENTS.AgentRegistry}#code`, verified: true },
+        TrustScore:    { address: DEPLOYMENTS.TrustScore,    explorerUrl: `${EXPLORER_BASE}/address/${DEPLOYMENTS.TrustScore}#code`,    verified: true },
+        LoanEscrow:    { address: DEPLOYMENTS.LoanEscrow,    explorerUrl: `${EXPLORER_BASE}/address/${DEPLOYMENTS.LoanEscrow}#code`,    verified: true },
       },
       deployer: "0xa4C397A81bf4Ec8e386418d39fd2D36efd524e64",
       network: { name: "X Layer Testnet", chainId: 1952, blockNumber },

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { api } from "../utils/api";
 
 interface AuditData {
-  contracts: Record<string, { address: string; explorerUrl: string }>;
+  contracts: Record<string, { address: string; explorerUrl: string; verified?: boolean }>;
   deployer: string;
   network: { name: string; chainId: number; blockNumber: number };
   stats: {
@@ -62,7 +62,10 @@ export function AuditPage() {
           {Object.entries(data.contracts).map(([name, info]) => (
             <div key={name} className="flex items-center justify-between px-4 py-3 rounded-lg bg-okx-card border border-okx-border">
               <div>
-                <div className="text-white text-sm font-medium">{name}</div>
+                <div className="flex items-center gap-2">
+                  <span className="text-white text-sm font-medium">{name}</span>
+                  {info.verified && <span className="px-1.5 py-0.5 rounded text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-900">✓ Verified</span>}
+                </div>
                 <div className="text-okx-dim font-mono text-xs mt-0.5">{info.address}</div>
               </div>
               <div className="flex items-center gap-2">
