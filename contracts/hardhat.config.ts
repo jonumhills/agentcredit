@@ -34,15 +34,24 @@ const config: HardhatUserConfig = {
   },
   etherscan: {
     apiKey: {
-      xlayer: process.env.OKLINK_API_KEY || "",
+      xlayer:        process.env.OKLINK_API_KEY || "",
+      xlayerTestnet: process.env.OKLINK_API_KEY || "",
     },
     customChains: [
       {
         network: "xlayer",
         chainId: 196,
         urls: {
-          apiURL: "https://www.oklink.com/api/v5/explorer/contract/verify-source-code-plugin/XLAYER",
+          apiURL:     "https://www.oklink.com/api/v5/explorer/contract/verify-source-code-plugin/XLAYER",
           browserURL: "https://www.oklink.com/xlayer",
+        },
+      },
+      {
+        network: "xlayerTestnet",
+        chainId: 1952,
+        urls: {
+          apiURL:     "https://www.oklink.com/api/v5/explorer/contract/verify-source-code-plugin/XLAYER_TEST",
+          browserURL: "https://www.oklink.com/xlayer-test",
         },
       },
     ],

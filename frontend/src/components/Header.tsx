@@ -1,13 +1,15 @@
 import { useState, useEffect } from "react";
 import { fetchHealth } from "../utils/api";
-import type { Tab } from "../App";
+import type { Tab, View } from "../App";
 
 interface HeaderProps {
   tab: Tab;
   onTabChange: (t: Tab) => void;
+  onAudit: () => void;
+  view: View;
 }
 
-export function Header({ tab, onTabChange }: HeaderProps) {
+export function Header({ tab, onTabChange, onAudit, view }: HeaderProps) {
   const [networkOk, setNetworkOk] = useState<boolean | null>(null);
   const [blockTime, setBlockTime] = useState<string>("");
 
@@ -33,11 +35,14 @@ export function Header({ tab, onTabChange }: HeaderProps) {
             <span className="font-semibold text-white text-sm tracking-tight">BancoProtocol</span>
           </div>
           <nav className="hidden md:flex items-center gap-5 text-okx-muted text-sm">
-            <span className="text-white font-medium cursor-pointer">Dashboard</span>
-            <span className="hover:text-white cursor-pointer transition-colors">Agents</span>
-            <span className="hover:text-white cursor-pointer transition-colors">Loans</span>
-            <span className="hover:text-white cursor-pointer transition-colors">KYA</span>
-            <span className="hover:text-white cursor-pointer transition-colors">Onchain OS</span>
+            <span
+              onClick={() => onTabChange("all")}
+              className={`cursor-pointer transition-colors ${view === "dashboard" ? "text-white font-medium" : "hover:text-white"}`}
+            >Dashboard</span>
+            <span
+              onClick={onAudit}
+              className={`cursor-pointer transition-colors ${view === "audit" ? "text-white font-medium" : "hover:text-white"}`}
+            >Onchain Audit</span>
           </nav>
         </div>
 
@@ -62,7 +67,7 @@ export function Header({ tab, onTabChange }: HeaderProps) {
       </div>
 
       {/* Sub-nav / filters */}
-      <div className="flex items-center gap-1 px-5 h-9 border-t border-okx-border overflow-x-auto">
+      <div className={`flex items-center gap-1 px-5 h-9 border-t border-okx-border overflow-x-auto ${view === "audit" ? "invisible" : ""}`}>
         <TabPill active={tab === "all"}        onClick={() => onTabChange("all")}>All Agents</TabPill>
         <TabPill active={tab === "lenders"}    onClick={() => onTabChange("lenders")}>Lenders</TabPill>
         <TabPill active={tab === "borrowers"}  onClick={() => onTabChange("borrowers")}>Borrowers</TabPill>

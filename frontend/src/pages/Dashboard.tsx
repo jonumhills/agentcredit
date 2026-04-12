@@ -10,9 +10,10 @@ import type { Tab } from "../App";
 interface Props {
   tab: Tab;
   onTabChange: (t: Tab) => void;
+  onAudit: () => void;
 }
 
-export function Dashboard({ tab, onTabChange }: Props) {
+export function Dashboard({ tab, onTabChange, onAudit }: Props) {
   const [agents, setAgents]       = useState<Agent[]>([]);
   const [lenders, setLenders]     = useState<LenderTerms[]>([]);
   const [leaderboard, setLeaderboard] = useState<Agent[]>([]);
@@ -99,6 +100,7 @@ export function Dashboard({ tab, onTabChange }: Props) {
               target="_blank"
               rel="noreferrer"
               className="btn-outline px-5 py-2 text-sm"
+              onClick={(e) => { e.preventDefault(); onAudit(); }}
             >On-chain Audit ↗</a>
           </div>
         </div>

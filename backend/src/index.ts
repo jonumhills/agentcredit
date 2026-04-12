@@ -7,6 +7,7 @@ dotenv.config({ path: path.join(__dirname, "../../.env") });
 import kyaRouter from "./routes/kya";
 import loansRouter from "./routes/loans";
 import agentsRouter from "./routes/agents";
+import auditRouter from "./routes/audit";
 import { LoanManager } from "./services/loanManager";
 
 const app = express();
@@ -19,6 +20,7 @@ app.use(express.json());
 app.use("/api/kya", kyaRouter);
 app.use("/api/loans", loansRouter);
 app.use("/api/agents", agentsRouter);
+app.use("/api/audit", auditRouter);
 
 app.get("/api/health", (_req, res) => {
   res.json({
