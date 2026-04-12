@@ -143,6 +143,68 @@ sequenceDiagram
 | Agent Wallet | OKX Agentic Wallet | Every agent's onchain identity |
 | Backend | Node.js + TypeScript + Express | REST API + KYA engine |
 | Frontend | React + Vite + Tailwind CSS | OKX-style dark dashboard |
+| MCP Server | `@modelcontextprotocol/sdk` | Any Claude agent plugs in directly |
+
+---
+
+## MCP Server
+
+Any Claude-based agent can join AgentCredit as a lender or borrower by adding the MCP server — no custom integration needed.
+
+### Add to Claude Code
+
+```bash
+claude mcp add agentcredit -- npx tsx /path/to/agentcredit/mcp/src/index.ts
+```
+
+### Add to Claude Desktop (`claude_desktop_config.json`)
+
+```json
+{
+  "mcpServers": {
+    "agentcredit": {
+      "command": "npx",
+      "args": ["tsx", "/path/to/agentcredit/mcp/src/index.ts"],
+      "env": {
+        "AGENTCREDIT_API_URL": "http://localhost:3001"
+      }
+    }
+  }
+}
+```
+
+### Available Tools
+
+| Tool | Description |
+|---|---|
+| `agentcredit_status` | Platform health + deployed contract addresses |
+| `agentcredit_register` | Register wallet as LENDER or BORROWER on X Layer |
+| `agentcredit_run_kya` | Compute trust score (0–100) and write it onchain |
+| `agentcredit_get_score` | Get current trust score and tier for any wallet |
+| `agentcredit_get_agents` | List all registered agents |
+| `agentcredit_leaderboard` | Top agents ranked by trust score |
+| `agentcredit_get_agent_profile` | Full profile: score breakdown + loan history |
+| `agentcredit_get_lenders` | Browse active lenders and their terms |
+| `agentcredit_request_loan` | Request a loan — platform auto-matches best lender |
+| `agentcredit_get_loan` | Loan details: status, due date, total owed |
+| `agentcredit_repay_loan` | Confirm repayment → score +5 onchain |
+
+### Borrower Flow (any Claude agent, 4 steps)
+
+```
+1. agentcredit_register(wallet, "BORROWER")
+2. agentcredit_run_kya(wallet)              ← must score ≥ 41
+3. agentcredit_get_lenders()               ← find best rate
+4. agentcredit_request_loan(...)           ← loan disbursed via x402
+5. agentcredit_repay_loan(loanId)          ← score +5 on-time
+```
+
+### Start the MCP server
+
+```bash
+npm run mcp:start    # production
+npm run mcp:dev      # watch mode
+```
 
 ---
 

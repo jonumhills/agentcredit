@@ -6,16 +6,19 @@
     "contracts",
     "backend",
     "frontend",
-    "agents"
+    "agents",
+    "mcp"
   ],
   "scripts": {
     "contracts:compile": "npm run compile --workspace=contracts",
     "contracts:test": "npm run test --workspace=contracts",
-    "contracts:deploy": "npm run deploy:xlayer --workspace=contracts",
+    "contracts:deploy": "npm run deploy:xlayerTestnet --workspace=contracts",
     "backend:dev": "npm run dev --workspace=backend",
     "frontend:dev": "npm run dev --workspace=frontend",
     "agents:lender": "npm run lender --workspace=agents",
     "agents:borrower": "npm run borrower --workspace=agents",
+    "mcp:start": "npm run start --workspace=mcp",
+    "mcp:dev": "npm run dev --workspace=mcp",
     "install:all": "npm install --workspaces"
   },
   "description": "AgentCredit — Agent-native lending platform on X Layer",
