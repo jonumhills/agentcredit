@@ -1,7 +1,8 @@
 import express from "express";
 import cors from "cors";
+import * as path from "path";
 import * as dotenv from "dotenv";
-dotenv.config({ path: "../.env" });
+dotenv.config({ path: path.join(__dirname, "../../.env") });
 
 import kyaRouter from "./routes/kya";
 import loansRouter from "./routes/loans";
@@ -50,10 +51,10 @@ async function checkDefaults() {
 
 setInterval(checkDefaults, DEFAULT_CHECK_INTERVAL);
 
-app.listen(PORT, () => {
-  console.log(`\nAgentCredit Backend running on http://localhost:${PORT}`);
-  console.log(`Health: http://localhost:${PORT}/api/health`);
-  console.log(`Network: ${process.env.XLAYER_RPC_URL || "X Layer Testnet"}\n`);
+app.listen(Number(PORT), "0.0.0.0", () => {
+  console.log(`\nAgentCredit Backend running on http://0.0.0.0:${PORT}`);
+  console.log(`Health: http://0.0.0.0:${PORT}/api/health`);
+  console.log(`Network: ${process.env.XLAYER_TESTNET_RPC_URL || "X Layer Testnet"}\n`);
 });
 
 export default app;
