@@ -23,7 +23,7 @@ import { ethers }  from "ethers";
 import * as fs     from "fs";
 import * as path   from "path";
 import * as dotenv from "dotenv";
-dotenv.config({ path: "../../.env" });
+dotenv.config({ path: require("path").join(__dirname, "../../.env") });
 
 import { LENDER_CONFIGS, BORROWER_CONFIGS } from "./config/agents.config";
 

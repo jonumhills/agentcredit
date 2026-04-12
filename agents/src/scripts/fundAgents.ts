@@ -20,7 +20,7 @@ import * as fs from "fs";
 import * as path from "path";
 import axios from "axios";
 import * as dotenv from "dotenv";
-dotenv.config({ path: "../../.env" });
+dotenv.config({ path: require("path").join(__dirname, "../../../.env") });
 
 const AGENTS_FILE = path.join(__dirname, "../../agents.json");
 

@@ -6,6 +6,7 @@
     "agents:create":    "ts-node-dev --transpile-only src/scripts/createAgents.ts",
     "agents:fund":      "ts-node-dev --transpile-only src/scripts/fundAgents.ts",
     "agents:bootstrap": "ts-node-dev --transpile-only src/scripts/bootstrapAgents.ts",
+    "agents:setscores": "ts-node-dev --transpile-only src/scripts/setDemoScores.ts",
     "agents:start":     "ts-node-dev --respawn --transpile-only src/orchestrator.ts",
     "build": "tsc"
   },
