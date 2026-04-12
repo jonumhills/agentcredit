@@ -8,6 +8,20 @@ const loanManager = new LoanManager();
 const matchmaking = new MatchmakingService();
 
 /**
+ * GET /api/loans/lenders/active
+ * Get all active lender terms.
+ * NOTE: must be defined before /:loanId to avoid route shadowing.
+ */
+router.get("/lenders/active", async (_req: Request, res: Response) => {
+  try {
+    const lenders = await matchmaking.getAllLenderTerms();
+    return res.json({ lenders });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+/**
  * POST /api/loans/request
  * Borrower agent submits a loan request.
  * Body: { borrower: string, amountEth: string, durationDays: number, purpose: string }
@@ -60,19 +74,6 @@ router.post("/:loanId/repay", async (req: Request, res: Response) => {
     const result = await loanManager.confirmRepayment(loanId);
     if (!result.success) return res.status(400).json({ error: result.error });
     return res.json({ success: true, loanId });
-  } catch (err: any) {
-    return res.status(500).json({ error: err.message });
-  }
-});
-
-/**
- * GET /api/loans/lenders/active
- * Get all active lender terms.
- */
-router.get("/lenders/active", async (_req: Request, res: Response) => {
-  try {
-    const lenders = await matchmaking.getAllLenderTerms();
-    return res.json({ lenders });
   } catch (err: any) {
     return res.status(500).json({ error: err.message });
   }

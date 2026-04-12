@@ -38,8 +38,10 @@ export const LOAN_ESCROW_ABI = [
   "function getActiveLenders() external view returns (address[])",
   "function getTotalDue(uint256 loanId) external view returns (uint256)",
   "function lenderTerms(address) external view returns (address lender, uint256 availableLiquidity, uint256 maxLoanSize, uint8 minBorrowerScore, uint256 interestRateBps, uint256 maxDurationSeconds, bool active)",
+  "function nextLoanId() external view returns (uint256)",
   "event LoanCreated(uint256 indexed loanId, address indexed lender, address indexed borrower, uint256 principal)",
   "event LoanRepaid(uint256 indexed loanId, address indexed borrower, uint256 amount, bool onTime)",
+  "event LoanDefaulted(uint256 indexed loanId, address indexed borrower)",
 ];
 
 export function getProvider(): ethers.JsonRpcProvider {
