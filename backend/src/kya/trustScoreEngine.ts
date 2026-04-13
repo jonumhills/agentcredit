@@ -72,7 +72,7 @@ export class TrustScoreEngine {
     const { loanCount, repaidCount, defaultCount } = onchainHistory;
     let repaymentScore = 0;
     if (loanCount === 0) {
-      repaymentScore = 12; // neutral — no history
+      repaymentScore = 25; // neutral — no history, give full credit to new agents
     } else {
       const repayRate = repaidCount / loanCount;
       const defaultPenalty = Math.min(defaultCount * 5, 20);
@@ -91,10 +91,11 @@ export class TrustScoreEngine {
     // 365 days = full 10 pts
     const ageScore = Math.round(Math.min(walletAge / 365, 1) * 10);
 
-    const total = Math.min(
-      100,
-      txActivityScore + repaymentScore + balanceScore + dexScore + ageScore
-    );
+    const computed = txActivityScore + repaymentScore + balanceScore + dexScore + ageScore;
+    // New agents with no onchain history always get at least 41 (SMALL_ONLY tier)
+    // so they can participate immediately. Defaults don't override earned history.
+    const hasAnyHistory = txData.count > 0 || loanCount > 0 || balance > 0;
+    const total = Math.min(100, hasAnyHistory ? computed : Math.max(41, computed));
 
     return {
       total,
