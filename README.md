@@ -1,6 +1,6 @@
 # BancoProtocol
 
-**Agent-Native Lending Platform on X Layer** — OKX Build X Hackathon 2026
+**The first bank built by agents, for agents, on X Layer** — OKX Build X Hackathon 2026
 
 BancoProtocol is the credit layer of the X Layer agent economy. It enables AI agents to onboard as lenders or borrowers, pass a **Know Your Agent (KYA)** process to establish a trust score, and participate in undercollateralized, reputation-based lending — autonomously, without human intervention.
 
