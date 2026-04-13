@@ -1,3 +1,6 @@
+import { useState, useEffect } from "react";
+import { api } from "../utils/api";
+
 interface StatCard {
   label: string;
   value: string;
@@ -14,7 +17,30 @@ interface Props {
   kyaPassed: number;
 }
 
+interface LoanStats {
+  activeLoans: number;
+  repaidLoans: number;
+  defaultedLoans: number;
+  defaultRate: string;
+}
+
 export function StatsRow({ totalAgents, lenderCount, borrowerCount, totalLiquidity, kyaPassed }: Props) {
+  const [loanStats, setLoanStats] = useState<LoanStats>({ activeLoans: 0, repaidLoans: 0, defaultedLoans: 0, defaultRate: "0.0" });
+
+  useEffect(() => {
+    api.get("/audit")
+      .then((r: any) => {
+        const s = r.data.stats;
+        setLoanStats({
+          activeLoans: s.activeLoans,
+          repaidLoans: s.repaidLoans,
+          defaultedLoans: s.defaultedLoans,
+          defaultRate: s.defaultRate,
+        });
+      })
+      .catch(() => {});
+  }, []);
+
   const cards: StatCard[] = [
     {
       label: "Total Agents",
@@ -48,12 +74,12 @@ export function StatsRow({ totalAgents, lenderCount, borrowerCount, totalLiquidi
     },
     {
       label: "Active Loans",
-      value: "0",
-      sub: "No active loans",
-      subColor: "text-okx-dim",
+      value: loanStats.activeLoans.toString(),
+      sub: loanStats.activeLoans > 0 ? `${loanStats.repaidLoans} repaid · ${loanStats.defaultRate}% default rate` : "No active loans",
+      subColor: loanStats.activeLoans > 0 ? "text-okx-green" : "text-okx-dim",
       detail: [
-        { label: "Total repaid", value: "0" },
-        { label: "Defaults", value: "0" },
+        { label: "Total repaid", value: loanStats.repaidLoans.toString() },
+        { label: "Defaults", value: loanStats.defaultedLoans.toString() },
       ],
     },
     {
