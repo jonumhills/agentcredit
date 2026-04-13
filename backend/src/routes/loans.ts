@@ -34,8 +34,9 @@ router.post("/request", async (req: Request, res: Response) => {
     }
 
     // Support durationHours for short demo loans (e.g. 6 hours)
+    const hours = Number(durationHours);
     const durationSeconds = durationHours
-      ? BigInt(Math.round(Number(durationHours) * 3600))
+      ? BigInt(Math.max(3600, Math.round(hours * 3600)))  // minimum 1 hour
       : BigInt(Number(durationDays) * 86400);
 
     const result = await loanManager.processLoanRequest({
