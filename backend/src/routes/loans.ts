@@ -28,15 +28,20 @@ router.get("/lenders/active", async (_req: Request, res: Response) => {
  */
 router.post("/request", async (req: Request, res: Response) => {
   try {
-    const { borrower, amountEth, durationDays, purpose } = req.body;
-    if (!borrower || !amountEth || !durationDays) {
-      return res.status(400).json({ error: "borrower, amountEth, durationDays required" });
+    const { borrower, amountEth, durationDays, durationHours, purpose } = req.body;
+    if (!borrower || !amountEth || (!durationDays && !durationHours)) {
+      return res.status(400).json({ error: "borrower, amountEth, durationDays or durationHours required" });
     }
+
+    // Support durationHours for short demo loans (e.g. 6 hours)
+    const durationSeconds = durationHours
+      ? BigInt(Math.round(Number(durationHours) * 3600))
+      : BigInt(Number(durationDays) * 86400);
 
     const result = await loanManager.processLoanRequest({
       borrower,
       amountWei: ethers.parseEther(amountEth.toString()),
-      durationSeconds: BigInt(Number(durationDays) * 86400),
+      durationSeconds,
       purpose: purpose || "",
     });
 

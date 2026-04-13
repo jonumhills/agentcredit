@@ -63,7 +63,9 @@ export class LoanManager {
           principal: ethers.formatEther(match.principal),
           interestBps: Number(match.interestBps),
           interestPct: Number(match.interestBps) / 100,
-          durationDays: Math.round(Number(match.durationSeconds) / 86400),
+          durationSeconds: Number(match.durationSeconds),
+          durationHours: +(Number(match.durationSeconds) / 3600).toFixed(1),
+          durationDays: +(Number(match.durationSeconds) / 86400).toFixed(2),
         },
       };
     } catch (err: any) {

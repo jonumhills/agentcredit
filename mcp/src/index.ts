@@ -153,13 +153,14 @@ function buildMcpServer(): McpServer {
     {
       borrower: z.string().describe("Borrower wallet address (must be registered + KYA passed)"),
       amountEth: z.string().describe("Amount to borrow in OKB (e.g. '0.05')"),
-      durationDays: z.number().int().min(1).max(90).describe("Loan duration in days (1–90)"),
+      durationDays: z.number().min(0).max(90).optional().describe("Loan duration in days (e.g. 7). Use durationHours for short demo loans."),
+      durationHours: z.number().min(0.5).max(72).optional().describe("Loan duration in hours for short demo loans (e.g. 6). Takes priority over durationDays."),
       purpose: z.string().describe("What the loan will be used for (e.g. 'DeFi yield farming on X Layer')"),
     },
-    async ({ borrower, amountEth, durationDays, purpose }) => ({
+    async ({ borrower, amountEth, durationDays, durationHours, purpose }) => ({
       content: [{
         type: "text",
-        text: await call("post", "/loans/request", { borrower, amountEth, durationDays, purpose }),
+        text: await call("post", "/loans/request", { borrower, amountEth, durationDays, durationHours, purpose }),
       }],
     })
   );
