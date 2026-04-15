@@ -1,59 +1,69 @@
 import { useState, useEffect } from "react";
+import { NavLink, useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { fetchHealth } from "../utils/api";
-import type { Tab, View } from "../App";
+import type { Tab } from "../App";
 
-interface HeaderProps {
-  tab: Tab;
-  onTabChange: (t: Tab) => void;
-  onAudit: () => void;
-  onMcp: () => void;
-  view: View;
-}
-
-export function Header({ tab, onTabChange, onAudit, onMcp, view }: HeaderProps) {
+export function Header() {
   const [networkOk, setNetworkOk] = useState<boolean | null>(null);
-  const [blockTime, setBlockTime] = useState<string>("");
+  const [blockTime, setBlockTime]  = useState<string>("");
+  const location    = useLocation();
+  const navigate    = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const tab = (searchParams.get("tab") as Tab) || "all";
+  const isDashboard = location.pathname === "/";
 
   useEffect(() => {
-    fetchHealth()
-      .then(() => { setNetworkOk(true); setBlockTime(new Date().toLocaleTimeString()); })
-      .catch(() => setNetworkOk(false));
-    const t = setInterval(() => {
+    const check = () =>
       fetchHealth()
         .then(() => { setNetworkOk(true); setBlockTime(new Date().toLocaleTimeString()); })
         .catch(() => setNetworkOk(false));
-    }, 10000);
+    check();
+    const t = setInterval(check, 10000);
     return () => clearInterval(t);
   }, []);
+
+  const setTab = (t: Tab) => {
+    if (!isDashboard) navigate("/");
+    setTimeout(() => setSearchParams(t === "all" ? {} : { tab: t }), isDashboard ? 0 : 50);
+  };
 
   return (
     <header className="border-b border-okx-border bg-okx-bg sticky top-0 z-50">
       <div className="flex items-center justify-between px-5 h-12">
+
         {/* Logo */}
         <div className="flex items-center gap-6">
-          <div className="flex items-center gap-2">
+          <NavLink to="/" className="flex items-center gap-2">
             <div className="w-7 h-7 bg-okx-blue rounded flex items-center justify-center text-white font-bold text-xs">BP</div>
             <span className="font-semibold text-white text-sm tracking-tight">BancoProtocol</span>
-          </div>
+          </NavLink>
+
           <nav className="hidden md:flex items-center gap-5 text-okx-muted text-sm">
-            <span
-              onClick={() => onTabChange("all")}
-              className={`cursor-pointer transition-colors ${view === "dashboard" ? "text-white font-medium" : "hover:text-white"}`}
-            >Dashboard</span>
-            <span
-              onClick={onAudit}
-              className={`cursor-pointer transition-colors ${view === "audit" ? "text-white font-medium" : "hover:text-white"}`}
-            >Onchain Audit</span>
-            <span
-              onClick={onMcp}
-              className={`cursor-pointer transition-colors ${view === "mcp" ? "text-white font-medium" : "hover:text-white"}`}
-            >Connect Agent</span>
+            <NavLink
+              to="/"
+              end
+              className={({ isActive }) =>
+                `cursor-pointer transition-colors ${isActive ? "text-white font-medium" : "hover:text-white"}`
+              }
+            >Dashboard</NavLink>
+            <NavLink
+              to="/audit"
+              className={({ isActive }) =>
+                `cursor-pointer transition-colors ${isActive ? "text-white font-medium" : "hover:text-white"}`
+              }
+            >Onchain Audit</NavLink>
+            <NavLink
+              to="/connect"
+              className={({ isActive }) =>
+                `cursor-pointer transition-colors ${isActive ? "text-white font-medium" : "hover:text-white"}`
+              }
+            >Connect Agent</NavLink>
           </nav>
         </div>
 
         {/* Right side */}
         <div className="flex items-center gap-3">
-          {/* Network status */}
           <div className="hidden sm:flex items-center gap-4 text-xs text-okx-muted border-r border-okx-border pr-3">
             <span>X Layer Testnet</span>
             {blockTime && <span className="text-okx-dim">{blockTime}</span>}
@@ -71,12 +81,12 @@ export function Header({ tab, onTabChange, onAudit, onMcp, view }: HeaderProps) 
         </div>
       </div>
 
-      {/* Sub-nav / filters */}
-      <div className={`flex items-center gap-1 px-5 h-9 border-t border-okx-border overflow-x-auto ${view === "audit" || view === "mcp" ? "invisible" : ""}`}>
-        <TabPill active={tab === "all"}        onClick={() => onTabChange("all")}>All Agents</TabPill>
-        <TabPill active={tab === "lenders"}    onClick={() => onTabChange("lenders")}>Lenders</TabPill>
-        <TabPill active={tab === "borrowers"}  onClick={() => onTabChange("borrowers")}>Borrowers</TabPill>
-        <TabPill active={tab === "leaderboard"} onClick={() => onTabChange("leaderboard")}>Leaderboard</TabPill>
+      {/* Sub-nav — only visible on Dashboard */}
+      <div className={`flex items-center gap-1 px-5 h-9 border-t border-okx-border overflow-x-auto ${isDashboard ? "" : "invisible"}`}>
+        <TabPill active={tab === "all"}         onClick={() => setTab("all")}>All Agents</TabPill>
+        <TabPill active={tab === "lenders"}     onClick={() => setTab("lenders")}>Lenders</TabPill>
+        <TabPill active={tab === "borrowers"}   onClick={() => setTab("borrowers")}>Borrowers</TabPill>
+        <TabPill active={tab === "leaderboard"} onClick={() => setTab("leaderboard")}>Leaderboard</TabPill>
       </div>
     </header>
   );

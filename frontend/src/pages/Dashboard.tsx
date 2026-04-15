@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { fetchAgents, fetchActiveLenders, fetchLeaderboard, runKYA } from "../utils/api";
 import type { Agent, LenderTerms } from "../utils/api";
 import { StatsRow } from "../components/StatsRow";
@@ -10,10 +11,10 @@ import type { Tab } from "../App";
 interface Props {
   tab: Tab;
   onTabChange: (t: Tab) => void;
-  onAudit: () => void;
 }
 
-export function Dashboard({ tab, onTabChange, onAudit }: Props) {
+export function Dashboard({ tab, onTabChange }: Props) {
+  const navigate = useNavigate();
   const [agents, setAgents]       = useState<Agent[]>([]);
   const [lenders, setLenders]     = useState<LenderTerms[]>([]);
   const [leaderboard, setLeaderboard] = useState<Agent[]>([]);
@@ -100,7 +101,7 @@ export function Dashboard({ tab, onTabChange, onAudit }: Props) {
               target="_blank"
               rel="noreferrer"
               className="btn-outline px-5 py-2 text-sm"
-              onClick={(e) => { e.preventDefault(); onAudit(); }}
+              onClick={(e) => { e.preventDefault(); navigate("/audit"); }}
             >On-chain Audit ↗</a>
           </div>
         </div>

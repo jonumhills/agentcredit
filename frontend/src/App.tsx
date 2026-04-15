@@ -1,28 +1,32 @@
-import { useState } from "react";
+import { Routes, Route, Navigate, useSearchParams } from "react-router-dom";
 import { Header } from "./components/Header";
 import { Dashboard } from "./pages/Dashboard";
 import { AuditPage } from "./pages/AuditPage";
 import { MCPSetupPage } from "./pages/MCPSetupPage";
 
 export type Tab = "all" | "lenders" | "borrowers" | "leaderboard";
-export type View = "dashboard" | "audit" | "mcp";
+
+function DashboardRoute() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tab = (searchParams.get("tab") as Tab) || "all";
+
+  const setTab = (t: Tab) => {
+    setSearchParams(t === "all" ? {} : { tab: t });
+  };
+
+  return <Dashboard tab={tab} onTabChange={setTab} />;
+}
 
 function App() {
-  const [tab, setTab]   = useState<Tab>("all");
-  const [view, setView] = useState<View>("dashboard");
-
   return (
     <>
-      <Header
-        tab={tab}
-        onTabChange={(t) => { setTab(t); setView("dashboard"); }}
-        onAudit={() => setView("audit")}
-        onMcp={() => setView("mcp")}
-        view={view}
-      />
-      {view === "audit" ? <AuditPage /> :
-       view === "mcp"   ? <MCPSetupPage /> :
-       <Dashboard tab={tab} onTabChange={setTab} onAudit={() => setView("audit")} />}
+      <Header />
+      <Routes>
+        <Route path="/"        element={<DashboardRoute />} />
+        <Route path="/audit"   element={<AuditPage />} />
+        <Route path="/connect" element={<MCPSetupPage />} />
+        <Route path="*"        element={<Navigate to="/" replace />} />
+      </Routes>
     </>
   );
 }
