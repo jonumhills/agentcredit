@@ -6,10 +6,11 @@ interface HeaderProps {
   tab: Tab;
   onTabChange: (t: Tab) => void;
   onAudit: () => void;
+  onMcp: () => void;
   view: View;
 }
 
-export function Header({ tab, onTabChange, onAudit, view }: HeaderProps) {
+export function Header({ tab, onTabChange, onAudit, onMcp, view }: HeaderProps) {
   const [networkOk, setNetworkOk] = useState<boolean | null>(null);
   const [blockTime, setBlockTime] = useState<string>("");
 
@@ -43,6 +44,10 @@ export function Header({ tab, onTabChange, onAudit, view }: HeaderProps) {
               onClick={onAudit}
               className={`cursor-pointer transition-colors ${view === "audit" ? "text-white font-medium" : "hover:text-white"}`}
             >Onchain Audit</span>
+            <span
+              onClick={onMcp}
+              className={`cursor-pointer transition-colors ${view === "mcp" ? "text-white font-medium" : "hover:text-white"}`}
+            >Connect Agent</span>
           </nav>
         </div>
 
@@ -67,7 +72,7 @@ export function Header({ tab, onTabChange, onAudit, view }: HeaderProps) {
       </div>
 
       {/* Sub-nav / filters */}
-      <div className={`flex items-center gap-1 px-5 h-9 border-t border-okx-border overflow-x-auto ${view === "audit" ? "invisible" : ""}`}>
+      <div className={`flex items-center gap-1 px-5 h-9 border-t border-okx-border overflow-x-auto ${view === "audit" || view === "mcp" ? "invisible" : ""}`}>
         <TabPill active={tab === "all"}        onClick={() => onTabChange("all")}>All Agents</TabPill>
         <TabPill active={tab === "lenders"}    onClick={() => onTabChange("lenders")}>Lenders</TabPill>
         <TabPill active={tab === "borrowers"}  onClick={() => onTabChange("borrowers")}>Borrowers</TabPill>
