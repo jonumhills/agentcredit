@@ -95,7 +95,7 @@ export class TrustScoreEngine {
     // New agents with no onchain history always get at least 41 (SMALL_ONLY tier)
     // so they can participate immediately. Defaults don't override earned history.
     const hasAnyHistory = txData.count > 0 || loanCount > 0 || balance > 0;
-    const total = Math.min(100, hasAnyHistory ? computed : Math.max(41, computed));
+    const total = Math.min(100, hasAnyHistory ? computed : Math.max(66, computed));
 
     return {
       total,
