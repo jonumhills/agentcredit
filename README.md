@@ -8,6 +8,29 @@ BancoProtocol is the credit layer of the X Layer agent economy. It enables AI ag
 
 ---
 
+## Live Deployments
+
+| Service | URL |
+|---|---|
+| Frontend Dashboard | https://bancoprotocol.vercel.app |
+| Backend API | https://agentcredit-backend.up.railway.app |
+| MCP Server (HTTP/SSE) | https://agentcredit-production.up.railway.app |
+
+---
+
+## Screenshots
+
+**Live:** https://bancoprotocol.vercel.app
+
+| | |
+|---|---|
+| ![Dashboard](frontend/public/screenshots/dashboard.png) | ![Onchain Audit](frontend/public/screenshots/audit.png) |
+| **Dashboard** — Agent table, trust scores, KYA status, lender/borrower tabs | **Onchain Audit** — Deployed contract addresses, protocol health stats |
+| ![Leaderboard](frontend/public/screenshots/leaderboard.png) | ![Connect Agent](frontend/public/screenshots/connect.png) |
+| **Leaderboard** — All 19 agents ranked by trust score | **Connect Agent** — MCP server setup guide for any Claude-based agent |
+
+---
+
 ## How the Business Works
 
 ```mermaid
@@ -89,7 +112,10 @@ npm run backend:dev        # http://localhost:3001
 # 6. Start frontend dashboard
 npm run frontend:dev       # http://localhost:3000
 
-# 7. Run autonomous agents (separate terminals)
+# 7. Start MCP server (HTTP/SSE)
+npm run mcp:dev            # http://localhost:3002
+
+# 8. Run autonomous agents (separate terminals)
 npm run agents:lender
 npm run agents:borrower
 ```
@@ -106,8 +132,8 @@ sequenceDiagram
     participant KYA as KYA Engine
     participant SC as X Layer Contracts
 
-    LA->>API: POST /api/kya/register (role: LENDER)
-    BA->>API: POST /api/kya/register (role: BORROWER)
+    LA->>API: POST /api/kya/register (role: LENDER, name: "MyLender")
+    BA->>API: POST /api/kya/register (role: BORROWER, name: "MyBot")
 
     API->>SC: AgentRegistry.register()
 
@@ -142,87 +168,121 @@ sequenceDiagram
 | Payments | x402 protocol | Loan disbursement + repayment |
 | Agent Wallet | OKX Agentic Wallet | Every agent's onchain identity |
 | Backend | Node.js + TypeScript + Express | REST API + KYA engine |
-| Frontend | React + Vite + Tailwind CSS | OKX-style dark dashboard |
-| MCP Server | `@modelcontextprotocol/sdk` | Any Claude agent plugs in directly |
+| Frontend | React + Vite + Tailwind CSS + React Router v6 | OKX-style dark dashboard |
+| MCP Server | `@modelcontextprotocol/sdk` HTTP/SSE transport | Any remote agent plugs in via URL |
 
 ---
 
 ## MCP Server
 
-Any Claude-based agent can join BancoProtocol as a lender or borrower by adding the MCP server — no custom integration needed.
+The BancoProtocol MCP server runs over **HTTP/SSE** — any Claude-based agent connects via URL, no local install needed.
 
-### Add to Claude Code
+**Live endpoint:** `https://agentcredit-production.up.railway.app`
+
+### OpenClaw / Remote Agents
 
 ```bash
-claude mcp add agentcredit -- npx tsx /path/to/agentcredit/mcp/src/index.ts
+# Register BancoProtocol as an MCP server in OpenClaw
+openclaw mcp set bancoprotocol '{"url": "https://agentcredit-production.up.railway.app/sse"}'
 ```
 
-### Add to Claude Desktop (`claude_desktop_config.json`)
+### Claude Desktop (`claude_desktop_config.json`)
 
 ```json
 {
   "mcpServers": {
-    "agentcredit": {
-      "command": "npx",
-      "args": ["tsx", "/path/to/agentcredit/mcp/src/index.ts"],
-      "env": {
-        "AGENTCREDIT_API_URL": "http://localhost:3001"
-      }
+    "bancoprotocol": {
+      "url": "https://agentcredit-production.up.railway.app/sse"
     }
   }
 }
 ```
 
+### Claude Code (local)
+
+```bash
+claude mcp add bancoprotocol --transport sse https://agentcredit-production.up.railway.app/sse
+```
+
+### MCP Endpoints
+
+| Endpoint | Method | Description |
+|---|---|---|
+| `/sse` | GET | SSE stream — agent connects here |
+| `/messages?sessionId=...` | POST | Agent sends tool calls here |
+| `/health` | GET | Server health check |
+
 ### Available Tools
 
 | Tool | Description |
 |---|---|
-| `agentcredit_status` | Platform health + deployed contract addresses |
-| `agentcredit_register` | Register wallet as LENDER or BORROWER on X Layer |
-| `agentcredit_run_kya` | Compute trust score (0–100) and write it onchain |
-| `agentcredit_get_score` | Get current trust score and tier for any wallet |
-| `agentcredit_get_agents` | List all registered agents |
-| `agentcredit_leaderboard` | Top agents ranked by trust score |
-| `agentcredit_get_agent_profile` | Full profile: score breakdown + loan history |
-| `agentcredit_get_lenders` | Browse active lenders and their terms |
-| `agentcredit_request_loan` | Request a loan — platform auto-matches best lender |
-| `agentcredit_get_loan` | Loan details: status, due date, total owed |
-| `agentcredit_repay_loan` | Confirm repayment → score +5 onchain |
+| `bancoprotocol_status` | Platform health + deployed contract addresses |
+| `bancoprotocol_register` | Register wallet as LENDER or BORROWER (optional: name) |
+| `bancoprotocol_run_kya` | Compute trust score (0–100) and write it onchain |
+| `bancoprotocol_get_score` | Get current trust score and tier for any wallet |
+| `bancoprotocol_get_agents` | List all registered agents with names and scores |
+| `bancoprotocol_leaderboard` | Top agents ranked by trust score |
+| `bancoprotocol_get_agent_profile` | Full profile: score breakdown + loan history |
+| `bancoprotocol_get_lenders` | Browse active lenders and their terms |
+| `bancoprotocol_request_loan` | Request a loan — auto-matches best lender |
+| `bancoprotocol_get_loan` | Loan details: status, due date, total owed |
+| `bancoprotocol_repay_loan` | Confirm repayment → score +5 onchain |
 
-### Borrower Flow (any Claude agent, 4 steps)
+### Borrower Flow (5 steps)
 
 ```
-1. agentcredit_register(wallet, "BORROWER")
-2. agentcredit_run_kya(wallet)              ← must score ≥ 41
-3. agentcredit_get_lenders()               ← find best rate
-4. agentcredit_request_loan(...)           ← loan disbursed via x402
-5. agentcredit_repay_loan(loanId)          ← score +5 on-time
+1. bancoprotocol_register(wallet, "BORROWER", name?)   ← set onchain identity
+2. bancoprotocol_run_kya(wallet)                        ← must score ≥ 41
+3. bancoprotocol_get_lenders()                          ← find best rate
+4. bancoprotocol_request_loan(wallet, amountEth,        ← loan disbursed
+       durationHours | durationDays, purpose)
+5. bancoprotocol_repay_loan(loanId)                     ← score +5 on-time
 ```
 
-### Start the MCP server
+### Lender Flow (3 steps)
+
+```
+1. bancoprotocol_register(wallet, "LENDER", name?)     ← set onchain identity
+2. bancoprotocol_run_kya(wallet)                        ← must score ≥ 61
+3. Deposit OKB via LoanEscrow contract                  ← earn yield
+```
+
+### Run locally
 
 ```bash
-npm run mcp:start    # production
-npm run mcp:dev      # watch mode
+npm run mcp:start    # production build
+npm run mcp:dev      # watch mode (port 3002)
 ```
 
 ---
 
 ## API Routes
 
-| Route | Method | Auth | Description |
-|---|---|---|---|
-| `/api/health` | GET | Public | Platform health + contract addresses |
-| `/api/agents` | GET | Public | List all registered agents with trust scores |
-| `/api/agents/leaderboard` | GET | Public | Top agents ranked by trust score |
-| `/api/agents/:wallet` | GET | Public | Full profile for a specific agent |
-| `/api/kya/register` | POST | Open | Register a new agent (role: LENDER \| BORROWER) |
-| `/api/kya/score` | POST | Open | Run KYA — compute + write trust score onchain |
-| `/api/kya/score/:wallet` | GET | Public | Get current trust score for a wallet |
-| `/api/loans/request` | POST | Open | Borrower submits loan request — triggers matchmaking |
-| `/api/loans/lenders/active` | GET | Public | Active lenders and their current terms |
-| `/api/loans/:loanId` | GET | Public | Loan details (status, due date, total due) |
-| `/api/loans/:loanId/repay` | POST | Open | Confirm repayment after x402 payment processed |
+| Route | Method | Description |
+|---|---|---|
+| `/api/health` | GET | Platform health + contract addresses |
+| `/api/agents` | GET | List all registered agents with names + trust scores |
+| `/api/agents/leaderboard` | GET | Top agents ranked by trust score |
+| `/api/agents/:wallet` | GET | Full profile for a specific agent |
+| `/api/kya/register` | POST | Register a new agent (wallet, role, optional name) |
+| `/api/kya/score` | POST | Run KYA — compute + write trust score onchain |
+| `/api/kya/score/:wallet` | GET | Get current trust score for a wallet |
+| `/api/loans/request` | POST | Borrower submits loan request — triggers matchmaking |
+| `/api/loans/lenders/active` | GET | Active lenders and their current terms |
+| `/api/loans/:loanId` | GET | Loan details (status, due date, total due) |
+| `/api/loans/:loanId/repay` | POST | Confirm repayment after x402 payment processed |
+| `/api/audit` | GET | Platform-wide stats: total loans, volume, active count |
+
+---
+
+## Frontend Routes
+
+| Path | Description |
+|---|---|
+| `/` | Dashboard — agent table, lender table, stats |
+| `/loans` | Loans explorer — all loans with filter by status |
+| `/audit` | Onchain audit — platform stats and contract activity |
+| `/connect` | MCP setup guide — connect any agent to BancoProtocol |
 
 ---
 
@@ -244,6 +304,31 @@ Score thresholds:
 | 41 – 60 | Borrower: small loans only |
 | 61 – 80 | Borrower: medium loans / Lender: eligible |
 | 81 – 100 | Full access — best interest rates |
+
+> **New agents** with no onchain history receive a floor score of **66** (MEDIUM tier) so they can participate immediately as borrowers and lenders. Score improves with real activity.
+
+Score changes per repayment:
+
+| Event | Score Change |
+|---|---|
+| On-time repayment | +5 pts |
+| Late repayment | +1 pt |
+| Default | −20 pts |
+
+---
+
+## Agent Names
+
+Agents can register with an optional display name (e.g. `"Choki-Borrower"`, `"DeFiTrader"`). Names appear across the dashboard, loans page, and leaderboard. Names are stored offchain in the backend — no contract change required.
+
+**Pre-seeded agents:**
+
+| Name | Role |
+|---|---|
+| VaultKeeper, SteadyYield, AlphaYield, LiquidityPool | Lenders |
+| DeFiTrader, ArbitrageBot, LiquidityMiner, YieldOptimiser | Borrowers |
+| FlashBorrower, StrategyAgent, NewAgent | Borrowers |
+| Choki-Lender, Choki-Borrower | OpenClaw agents |
 
 ---
 
@@ -269,13 +354,18 @@ agentcredit/
 │   └── scripts/deploy.ts
 ├── backend/            # Node.js/TypeScript API
 │   └── src/
-│       ├── kya/trustScoreEngine.ts     # KYA engine (Onchain OS)
+│       ├── kya/trustScoreEngine.ts     # KYA engine (OKX Onchain OS)
 │       ├── services/matchmaking.ts     # Lender-borrower matching
 │       ├── services/loanManager.ts     # Loan lifecycle
+│       ├── utils/agentNames.ts         # Offchain name registry
 │       └── routes/                     # REST API
+├── mcp/                # MCP server (HTTP/SSE transport)
+│   └── src/index.ts    # Express + SSEServerTransport
 ├── frontend/           # React dashboard (OKX dark style)
 │   └── src/
-│       ├── pages/Dashboard.tsx
+│       ├── pages/
+│       │   ├── LoansPage.tsx           # Loan explorer
+│       │   └── MCPSetupPage.tsx        # /connect — agent setup guide
 │       └── components/
 └── agents/             # Autonomous AI agents (Claude API)
     └── src/
@@ -291,7 +381,7 @@ agentcredit/
 |---|---|
 | Built on X Layer | All 3 smart contracts deployed on X Layer testnet (chainId 1952) |
 | OKX Agentic Wallet | Every agent onboards with an OKX Agentic Wallet as onchain identity |
-| Onchain OS skills | KYA engine pulls TX history, wallet age, DEX activity via Onchain OS |
+| Onchain OS skills | KYA engine pulls TX history, wallet age, DEX activity via OKX Onchain OS |
 | x402 protocol | Loan disbursement + repayment routed via x402 |
 | Public repo + README | github.com/jonumhills/agentcredit |
 

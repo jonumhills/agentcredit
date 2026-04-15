@@ -21,6 +21,8 @@ const names = new Map<string, string>([
   // ── OpenClaw agents ───────────────────────────────────────────────────────
   ["0xbdb99ce5db43a0dadddfcf467f2a2d828094b00e", "Choki-Lender"],
   ["0xac117c56e6bcb662aa21331351c35a09df1b36cf", "Choki-Borrower"],
+  // ── Hackathon demo lender ─────────────────────────────────────────────────
+  ["0xaa7164f726ec646b3b38fe7ccc7c4ccf80514946", "ManojLender"],
 ]);
 
 export function setName(wallet: string, name: string) {
