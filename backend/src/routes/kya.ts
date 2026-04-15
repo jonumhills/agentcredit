@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
 import { TrustScoreEngine } from "../kya/trustScoreEngine";
 import { getRegistryContract, getTrustScoreContract, getSigner, getProvider } from "../utils/blockchain";
+import { setName } from "../utils/agentNames";
 
 const router = Router();
 const engine = new TrustScoreEngine();
@@ -12,7 +13,7 @@ const engine = new TrustScoreEngine();
  */
 router.post("/register", async (req: Request, res: Response) => {
   try {
-    const { wallet, role } = req.body;
+    const { wallet, role, name } = req.body;
     if (!wallet || !role) {
       return res.status(400).json({ error: "wallet and role required" });
     }
@@ -23,7 +24,9 @@ router.post("/register", async (req: Request, res: Response) => {
     const tx = await registry.register(wallet, roleEnum);
     await tx.wait();
 
-    return res.json({ success: true, wallet, role, message: "Agent registered. Run KYA to get trust score." });
+    if (name) setName(wallet, name);
+
+    return res.json({ success: true, wallet, role, name: name || null, message: "Agent registered. Run KYA to get trust score." });
   } catch (err: any) {
     return res.status(500).json({ error: err.message });
   }

@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
 import { getRegistryContract, getTrustScoreContract, getLoanEscrowContract, getProvider } from "../utils/blockchain";
 import { ethers } from "ethers";
+import { getName } from "../utils/agentNames";
 
 const router = Router();
 
@@ -25,6 +26,7 @@ router.get("/", async (_req: Request, res: Response) => {
         const roleMap: Record<number, string> = { 0: "UNREGISTERED", 1: "LENDER", 2: "BORROWER" };
         return {
           wallet: addr,
+          name: getName(addr) || null,
           role: roleMap[Number(profile.role)] || "UNKNOWN",
           kycPassed: profile.kycPassed,
           active: profile.active,
@@ -58,6 +60,7 @@ router.get("/leaderboard", async (_req: Request, res: Response) => {
         const roleMap: Record<number, string> = { 0: "UNREGISTERED", 1: "LENDER", 2: "BORROWER" };
         return {
           wallet: addr,
+          name: getName(addr) || null,
           trustScore: Number(score),
           role: roleMap[Number(profile.role)] || "UNKNOWN",
           kycPassed: profile.kycPassed,
@@ -94,6 +97,7 @@ router.get("/:wallet", async (req: Request, res: Response) => {
 
     return res.json({
       wallet,
+      name: getName(wallet) || null,
       role: roleMap[Number(profile.role)] || "UNKNOWN",
       kycPassed: profile.kycPassed,
       active: profile.active,

@@ -128,12 +128,13 @@ function AgentRow({ agent, onRunKYA, copied, onCopy }: {
       <td className="px-4 py-2.5">
         <div className="flex items-center gap-2.5">
           <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${agent.role === "LENDER" ? "bg-blue-950 text-blue-400" : "bg-purple-950 text-purple-400"}`}>
-            {roleIcon(agent.role)}
+            {agent.name ? agent.name.slice(0, 2).toUpperCase() : roleIcon(agent.role)}
           </div>
           <div>
             <div className="flex items-center gap-1.5">
+              {agent.name && <span className="text-white font-medium">{agent.name}</span>}
               <a href={`${EXPLORER}/address/${agent.wallet}`} target="_blank" rel="noreferrer"
-                className="text-white font-medium hover:text-okx-blue transition-colors font-mono">
+                className={`hover:text-okx-blue transition-colors font-mono ${agent.name ? "text-okx-dim text-[10px]" : "text-white font-medium"}`}>
                 {short(agent.wallet)}
               </a>
               <button

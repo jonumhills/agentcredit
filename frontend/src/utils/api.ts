@@ -9,6 +9,7 @@ export const api = axios.create({
 
 export interface Agent {
   wallet: string;
+  name: string | null;
   role: "LENDER" | "BORROWER" | "UNREGISTERED";
   kycPassed: boolean;
   active: boolean;

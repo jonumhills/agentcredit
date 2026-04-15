@@ -74,9 +74,10 @@ function buildMcpServer(): McpServer {
     {
       wallet: z.string().describe("The agent's wallet address (0x...)"),
       role: z.enum(["LENDER", "BORROWER"]).describe("LENDER deposits liquidity and earns interest. BORROWER requests loans against trust score."),
+      name: z.string().optional().describe("Optional display name for the agent (e.g. 'Choki', 'TradingBot-1'). Shown on the dashboard."),
     },
-    async ({ wallet, role }) => ({
-      content: [{ type: "text", text: await call("post", "/kya/register", { wallet, role }) }],
+    async ({ wallet, role, name }) => ({
+      content: [{ type: "text", text: await call("post", "/kya/register", { wallet, role, name }) }],
     })
   );
 
