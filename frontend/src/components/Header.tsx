@@ -40,19 +40,9 @@ export function Header() {
           </NavLink>
 
           <nav className="hidden md:flex items-center gap-5 text-okx-muted text-sm">
-            <NavLink
-              to="/"
-              end
-              className={({ isActive }) =>
-                `cursor-pointer transition-colors ${isActive ? "text-white font-medium" : "hover:text-white"}`
-              }
-            >Dashboard</NavLink>
-            <NavLink
-              to="/audit"
-              className={({ isActive }) =>
-                `cursor-pointer transition-colors ${isActive ? "text-white font-medium" : "hover:text-white"}`
-              }
-            >Onchain Audit</NavLink>
+            <NavLink to="/" end className={({ isActive }) => `cursor-pointer transition-colors ${isActive ? "text-white font-medium" : "hover:text-white"}`}>Dashboard</NavLink>
+            <NavLink to="/loans"   className={({ isActive }) => `cursor-pointer transition-colors ${isActive ? "text-white font-medium" : "hover:text-white"}`}>Loans</NavLink>
+            <NavLink to="/audit"   className={({ isActive }) => `cursor-pointer transition-colors ${isActive ? "text-white font-medium" : "hover:text-white"}`}>Onchain Audit</NavLink>
             <NavLink
               to="/connect"
               className={({ isActive }) =>
@@ -82,7 +72,7 @@ export function Header() {
       </div>
 
       {/* Sub-nav — only visible on Dashboard */}
-      <div className={`flex items-center gap-1 px-5 h-9 border-t border-okx-border overflow-x-auto ${isDashboard ? "" : "invisible"}`}>
+      <div className={`flex items-center gap-1 px-5 h-9 border-t border-okx-border overflow-x-auto ${isDashboard ? "" : "invisible pointer-events-none"}`}>
         <TabPill active={tab === "all"}         onClick={() => setTab("all")}>All Agents</TabPill>
         <TabPill active={tab === "lenders"}     onClick={() => setTab("lenders")}>Lenders</TabPill>
         <TabPill active={tab === "borrowers"}   onClick={() => setTab("borrowers")}>Borrowers</TabPill>

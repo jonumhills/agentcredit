@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { api } from "../utils/api";
+import type { Agent } from "../utils/api";
 
 interface StatCard {
   label: string;
@@ -15,6 +16,7 @@ interface Props {
   borrowerCount: number;
   totalLiquidity: string;
   kyaPassed: number;
+  agents: Agent[];
 }
 
 interface LoanStats {
@@ -24,22 +26,25 @@ interface LoanStats {
   defaultRate: string;
 }
 
-export function StatsRow({ totalAgents, lenderCount, borrowerCount, totalLiquidity, kyaPassed }: Props) {
+export function StatsRow({ totalAgents, lenderCount, borrowerCount, totalLiquidity, kyaPassed, agents }: Props) {
   const [loanStats, setLoanStats] = useState<LoanStats>({ activeLoans: 0, repaidLoans: 0, defaultedLoans: 0, defaultRate: "0.0" });
 
   useEffect(() => {
     api.get("/audit")
       .then((r: any) => {
         const s = r.data.stats;
-        setLoanStats({
-          activeLoans: s.activeLoans,
-          repaidLoans: s.repaidLoans,
-          defaultedLoans: s.defaultedLoans,
-          defaultRate: s.defaultRate,
-        });
+        setLoanStats({ activeLoans: s.activeLoans, repaidLoans: s.repaidLoans, defaultedLoans: s.defaultedLoans, defaultRate: s.defaultRate });
       })
       .catch(() => {});
   }, []);
+
+  // Compute avg trust score from agents with a score
+  const scored = agents.filter(a => a.trustScore > 0);
+  const avgScore = scored.length > 0 ? Math.round(scored.reduce((s, a) => s + a.trustScore, 0) / scored.length) : null;
+  const fullAccess = agents.filter(a => a.trustScore >= 81).length;
+  const noAccess   = agents.filter(a => a.trustScore > 0 && a.trustScore < 41).length;
+
+  const avgColor = avgScore == null ? "text-okx-dim" : avgScore >= 81 ? "text-okx-green" : avgScore >= 61 ? "text-okx-blue" : avgScore >= 41 ? "text-yellow-400" : "text-okx-red";
 
   const cards: StatCard[] = [
     {
@@ -48,7 +53,7 @@ export function StatsRow({ totalAgents, lenderCount, borrowerCount, totalLiquidi
       sub: kyaPassed > 0 ? `+${kyaPassed} KYA passed` : "No agents yet",
       subColor: kyaPassed > 0 ? "text-okx-green" : "text-okx-dim",
       detail: [
-        { label: "Lenders", value: lenderCount.toString() },
+        { label: "Lenders",   value: lenderCount.toString() },
         { label: "Borrowers", value: borrowerCount.toString() },
       ],
     },
@@ -69,7 +74,7 @@ export function StatsRow({ totalAgents, lenderCount, borrowerCount, totalLiquidi
       subColor: kyaPassed > 0 ? "text-okx-green" : "text-okx-dim",
       detail: [
         { label: "KYA passed", value: kyaPassed.toString() },
-        { label: "Pending", value: (totalAgents - kyaPassed).toString() },
+        { label: "Pending",    value: (totalAgents - kyaPassed).toString() },
       ],
     },
     {
@@ -79,17 +84,17 @@ export function StatsRow({ totalAgents, lenderCount, borrowerCount, totalLiquidi
       subColor: loanStats.activeLoans > 0 ? "text-okx-green" : "text-okx-dim",
       detail: [
         { label: "Total repaid", value: loanStats.repaidLoans.toString() },
-        { label: "Defaults", value: loanStats.defaultedLoans.toString() },
+        { label: "Defaults",     value: loanStats.defaultedLoans.toString() },
       ],
     },
     {
       label: "Avg Trust Score",
-      value: "—",
-      sub: "Computed by KYA engine",
-      subColor: "text-okx-muted",
+      value: avgScore != null ? avgScore.toString() : "—",
+      sub: avgScore != null ? `${scored.length} agents scored` : "No scores yet",
+      subColor: avgColor,
       detail: [
-        { label: "Full access (>80)", value: "0" },
-        { label: "No access (<40)", value: "0" },
+        { label: "Full access (>80)", value: fullAccess.toString() },
+        { label: "No access (<41)",   value: noAccess.toString() },
       ],
     },
   ];
@@ -100,9 +105,9 @@ export function StatsRow({ totalAgents, lenderCount, borrowerCount, totalLiquidi
         <div key={card.label} className="bg-okx-bg p-4">
           <div className="flex items-start justify-between mb-1">
             <span className="text-okx-muted text-xs">{card.label}</span>
-            <span className="text-okx-dim text-xs cursor-pointer">ⓘ</span>
+            <span className="text-okx-dim text-xs">ⓘ</span>
           </div>
-          <div className="text-white font-semibold text-lg leading-tight mb-0.5">{card.value}</div>
+          <div className={`font-semibold text-lg leading-tight mb-0.5 ${card.label === "Avg Trust Score" ? avgColor : "text-white"}`}>{card.value}</div>
           {card.sub && <div className={`text-xs ${card.subColor}`}>{card.sub}</div>}
           {card.detail && (
             <div className="mt-2 pt-2 border-t border-okx-border flex gap-4">

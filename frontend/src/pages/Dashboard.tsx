@@ -128,6 +128,7 @@ export function Dashboard({ tab, onTabChange }: Props) {
         borrowerCount={borrowers.length}
         totalLiquidity={totalLiquidity}
         kyaPassed={kyaPassed}
+        agents={agents}
       />
 
       {/* ── Tab bar ──────────────────────────────────────────────────────── */}
