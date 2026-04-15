@@ -5,16 +5,29 @@ import type { Loan } from "../utils/api";
 const EXPLORER = "https://www.oklink.com/xlayer-test";
 const short = (addr: string) => `${addr.slice(0, 6)}...${addr.slice(-4)}`;
 
+type NameMap = Record<string, string>;
+
 export function LoansPage() {
   const [loans, setLoans]     = useState<Loan[]>([]);
+  const [names, setNames]     = useState<NameMap>({});
   const [loading, setLoading] = useState(true);
   const [error, setError]     = useState<string | null>(null);
   const [filter, setFilter]   = useState<"ALL" | "ACTIVE" | "REPAID" | "DEFAULTED">("ALL");
 
   const load = useCallback(async () => {
     try {
-      // Fetch audit to get total loan count
-      const audit = await api.get("/audit");
+      const [audit, agentsRes] = await Promise.all([
+        api.get("/audit"),
+        api.get("/agents"),
+      ]);
+
+      // Build wallet → name map
+      const nameMap: NameMap = {};
+      for (const a of agentsRes.data.agents ?? []) {
+        if (a.name) nameMap[a.wallet.toLowerCase()] = a.name;
+      }
+      setNames(nameMap);
+
       const total: number = audit.data.stats.totalLoans;
       if (total === 0) { setLoans([]); setLoading(false); return; }
 
@@ -100,7 +113,7 @@ export function LoansPage() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map(loan => <LoanRow key={loan.id} loan={loan} />)}
+              {filtered.map(loan => <LoanRow key={loan.id} loan={loan} names={names} />)}
             </tbody>
           </table>
         </div>
@@ -109,7 +122,8 @@ export function LoansPage() {
   );
 }
 
-function LoanRow({ loan }: { loan: Loan }) {
+function LoanRow({ loan, names }: { loan: Loan; names: NameMap }) {
+  const nameOf = (addr: string) => names[addr.toLowerCase()];
   const due      = new Date(loan.dueTime);
   const now      = new Date();
   const msLeft   = due.getTime() - now.getTime();
@@ -130,13 +144,11 @@ function LoanRow({ loan }: { loan: Loan }) {
       <td className="px-4 py-3 font-mono text-okx-muted">#{loan.id}</td>
 
       <td className="px-4 py-3">
-        <a href={`${EXPLORER}/address/${loan.borrower}`} target="_blank" rel="noreferrer"
-          className="font-mono text-okx-blue hover:underline">{short(loan.borrower)}</a>
+        <AgentCell addr={loan.borrower} name={nameOf(loan.borrower)} color="text-okx-blue" />
       </td>
 
       <td className="px-4 py-3">
-        <a href={`${EXPLORER}/address/${loan.lender}`} target="_blank" rel="noreferrer"
-          className="font-mono text-okx-muted hover:text-white hover:underline">{short(loan.lender)}</a>
+        <AgentCell addr={loan.lender} name={nameOf(loan.lender)} color="text-okx-muted" />
       </td>
 
       <td className="px-4 py-3 text-right">
@@ -164,6 +176,18 @@ function LoanRow({ loan }: { loan: Loan }) {
         <StatusBadge status={loan.status} />
       </td>
     </tr>
+  );
+}
+
+function AgentCell({ addr, name, color }: { addr: string; name?: string; color: string }) {
+  return (
+    <div>
+      {name && <div className={`font-medium text-xs ${color}`}>{name}</div>}
+      <a href={`${EXPLORER}/address/${addr}`} target="_blank" rel="noreferrer"
+        className={`font-mono hover:underline ${name ? "text-okx-dim text-[10px]" : `${color} text-xs`}`}>
+        {short(addr)}
+      </a>
+    </div>
   );
 }
 
